@@ -1,6 +1,7 @@
 package com.database.firebase_app;
 
 import static com.database.firebase_app.FBRef.refAuth;
+import static com.database.firebase_app.FBRef.refUsers;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -77,9 +78,14 @@ public class AuthActivity extends AppCompatActivity
                             if (task.isSuccessful())
                             {
                                 Log.i("AuthActivity", "createUserWithEmailAndPassword:success");
-                                FirebaseUser user = refAuth.getCurrentUser();
-                                tVMsg.setText("User created successfully\nUid: "+user.getUid());
-                            } else {
+                                FirebaseUser authUser = refAuth.getCurrentUser();
+                                User dbUser = new User(authUser.getUid(), name, age, addr);
+                                refUsers.child(dbUser.getUserID()).setValue(dbUser);
+
+                                tVMsg.setText("User created successfully\nUid: " + authUser.getUid());
+                            }
+                            else
+                            {
                                 Exception exp = task.getException();
                                 if (exp instanceof FirebaseAuthInvalidUserException){
                                     tVMsg.setText("Invalid email address.");
