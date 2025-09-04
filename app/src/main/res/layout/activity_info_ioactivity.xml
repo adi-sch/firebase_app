@@ -59,12 +59,12 @@
             android:layout_weight="1" />
 
         <EditText
-            android:id="@+id/eTDateRead"
+            android:id="@+id/eTHaveRead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:hint="date read"
+            android:hint="have read? (Y/N)"
             android:inputType="datetime" />
 
         <Space
@@ -76,7 +76,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="createUser"
             android:text="Add Book" />
 
         <Space

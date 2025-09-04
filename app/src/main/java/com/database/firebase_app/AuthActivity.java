@@ -4,6 +4,7 @@ import static com.database.firebase_app.FBRef.refAuth;
 import static com.database.firebase_app.FBRef.refUsers;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -83,6 +84,7 @@ public class AuthActivity extends AppCompatActivity
                                 refUsers.child(dbUser.getUserID()).setValue(dbUser);
 
                                 tVMsg.setText("User created successfully\nUid: " + authUser.getUid());
+                                //Intent intent = new Intent(this, InfoIOActivity.class);
                             }
                             else
                             {
