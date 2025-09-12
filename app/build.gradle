@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'com.database.firebase_app'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.database.firebase_app"

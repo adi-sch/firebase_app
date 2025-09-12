@@ -7,7 +7,7 @@ public class User
     private String age;
     private String address;
 
-    public User(String userId, String name, String age, String address)
+    public User(String userID, String name, String age, String address)
     {
         this.address = address;
         this.age = age;
@@ -19,6 +19,21 @@ public class User
 
     public String getUserID()
     {
-        return userID;
+        return this.userID;
+    }
+
+    public String getName()
+    {
+        return this.name;
+    }
+
+    public String getAge()
+    {
+        return this.age;
+    }
+
+    public String getAddress()
+    {
+        return this.address;
     }
 }

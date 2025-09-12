@@ -65,7 +65,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="have read? (Y/N)"
-            android:inputType="datetime" />
+            android:inputType="textCapCharacters" />
 
         <Space
             android:layout_width="match_parent"
@@ -76,7 +76,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Add Book" />
+            android:text="Add Book"
+            android:onClick="addBook"/>
 
         <Space
             android:layout_width="match_parent"
@@ -92,8 +93,9 @@
     </LinearLayout>
 
     <ListView
+        android:id="@+id/lVBooks"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="30dp"
         android:layout_weight="0.5" />
 

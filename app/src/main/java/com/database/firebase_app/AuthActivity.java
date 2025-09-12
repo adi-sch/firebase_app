@@ -83,8 +83,7 @@ public class AuthActivity extends AppCompatActivity
                                 User dbUser = new User(authUser.getUid(), name, age, addr);
                                 refUsers.child(dbUser.getUserID()).setValue(dbUser);
 
-                                tVMsg.setText("User created successfully\nUid: " + authUser.getUid());
-                                //Intent intent = new Intent(this, InfoIOActivity.class);
+                                createdUserSuccessfully(authUser.getUid());
                             }
                             else
                             {
@@ -106,5 +105,14 @@ public class AuthActivity extends AppCompatActivity
                         }
                     });
         }
+    }
+
+    private void createdUserSuccessfully(String userID)
+    {
+        tVMsg.setText("User created successfully\nUid: " + userID);
+
+        Intent intent = new Intent(this, InfoIOActivity.class);
+        intent.putExtra("userID", userID);
+        startActivity(intent);
     }
 }
