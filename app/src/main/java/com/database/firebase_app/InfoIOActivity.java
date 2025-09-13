@@ -11,24 +11,31 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class InfoIOActivity extends AppCompatActivity {
+public class InfoIOActivity extends AppCompatActivity
+{
 
     private EditText eTTitle, eTAuthor, eTRating, eTHaveRead;
     private TextView tVMsg;
     private ListView lVBooks;
+
+    ValueEventListener booksListener;
     private DatabaseReference refCurrUserBooks;
     private ArrayList<Book> booksList;
-    private ArrayAdapter adp;
+    private CustomAdapter adp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +45,9 @@ public class InfoIOActivity extends AppCompatActivity {
 
         String userID = this.getIntent().getStringExtra("userID");
         refCurrUserBooks = refUsers.child(userID).child("Books");
+
         init();
+        updateBooksListView();
     }
 
     private void init()
@@ -51,7 +60,7 @@ public class InfoIOActivity extends AppCompatActivity {
         lVBooks = findViewById(R.id.lVBooks);
 
         booksList = new ArrayList<>();
-        adp = new ArrayAdapter<>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, booksList);
+        adp = new CustomAdapter(this, booksList);
         lVBooks.setAdapter(adp);
     }
 
@@ -77,12 +86,40 @@ public class InfoIOActivity extends AppCompatActivity {
         Book newBook = new Book(bookId, title, author, rating, haveRead);
         refCurrUserBooks.child(bookId).setValue(newBook);
 
-        booksList.add(newBook);
-        updateBooksListView();
+        /*booksList.add(newBook);
+        updateBooksListView();*/
     }
 
     public void updateBooksListView()
     {
-        adp.notifyDataSetChanged();
+        booksListener = new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                booksList.clear();
+                for (DataSnapshot data: snapshot.getChildren())
+                {
+                    Book bookTemp = data.getValue(Book.class);
+                    booksList.add(bookTemp);
+                }
+                adp.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        };
+
+        refCurrUserBooks.addValueEventListener(booksListener);
+    }
+
+    @Override
+    protected void onPause()
+    {
+        if (booksListener!=null)
+        {
+            refCurrUserBooks.removeEventListener(booksListener);
+        }
+        super.onPause();
     }
 }

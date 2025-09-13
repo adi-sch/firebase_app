@@ -19,6 +19,8 @@ public class Book
         this.haveRead = haveRead;
     }
 
+    public Book() {}
+
     public void setBookID(String bookID)
     {
         this.bookID = bookID;
