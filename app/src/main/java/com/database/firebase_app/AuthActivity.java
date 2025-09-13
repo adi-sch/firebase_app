@@ -35,7 +35,8 @@ public class AuthActivity extends AppCompatActivity
     private TextView tVMsg;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_auth);
@@ -51,10 +52,20 @@ public class AuthActivity extends AppCompatActivity
         eTAge = findViewById(R.id.eTAge);
         eTAddr = findViewById(R.id.eTAddr);
         tVMsg = findViewById(R.id.tVMsg);
+
+        enableSignupFields(false);
     }
 
-    public void createUser(View view)
+    private void enableSignupFields(boolean state)
     {
+        eTName.setEnabled(state);
+        eTAge.setEnabled(state);
+        eTAddr.setEnabled(state);
+    }
+
+    public void signUp(View view)
+    {
+        enableSignupFields(true);
         String email = eTEmail.getText().toString();
         String pass = eTPass.getText().toString();
         String name = eTName.getText().toString();
@@ -74,7 +85,8 @@ public class AuthActivity extends AppCompatActivity
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
                     {
                         @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
+                        public void onComplete(@NonNull Task<AuthResult> task)
+                        {
                             pd.dismiss();
                             if (task.isSuccessful())
                             {
@@ -83,36 +95,78 @@ public class AuthActivity extends AppCompatActivity
                                 User dbUser = new User(authUser.getUid(), name, age, addr);
                                 refUsers.child(dbUser.getUserID()).setValue(dbUser);
 
-                                createdUserSuccessfully(authUser.getUid());
+                                authEndedSuccessfully(authUser.getUid());
                             }
                             else
                             {
-                                Exception exp = task.getException();
-                                if (exp instanceof FirebaseAuthInvalidUserException){
-                                    tVMsg.setText("Invalid email address.");
-                                } else if (exp instanceof FirebaseAuthWeakPasswordException) {
-                                    tVMsg.setText("Password too weak.");
-                                } else if (exp instanceof FirebaseAuthUserCollisionException) {
-                                    tVMsg.setText("User already exists.");
-                                } else if (exp instanceof FirebaseAuthInvalidCredentialsException) {
-                                    tVMsg.setText("General authentication failure.");
-                                } else if (exp instanceof FirebaseNetworkException) {
-                                    tVMsg.setText("Network error. Please check your connection and try again.");
-                                } else {
-                                    tVMsg.setText("An error occurred. Please try again later.");
-                                }
+                                authFailed(task.getException());
+                                enableSignupFields(false);
                             }
                         }
                     });
         }
     }
 
-    private void createdUserSuccessfully(String userID)
+    public void login(View view)
+    {
+        String email = eTEmail.getText().toString();
+        String pass = eTPass.getText().toString();
+        if (email.isEmpty() || pass.isEmpty())
+        {
+            tVMsg.setText("Please fill all fields");
+        }
+        else
+        {
+            ProgressDialog pd = new ProgressDialog(this);
+            pd.setTitle("Connecting");
+            pd.setMessage("Logging in user...");
+            pd.show();
+            refAuth.signInWithEmailAndPassword(email, pass)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
+                    {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task)
+                        {
+                            pd.dismiss();
+                            if (task.isSuccessful())
+                            {
+                                Log.i("AuthActivity", "loginUserWithEmailAndPassword:success");
+                                FirebaseUser authUser = refAuth.getCurrentUser();
+
+                                authEndedSuccessfully(authUser.getUid());
+                            }
+                            else
+                            {
+                                authFailed(task.getException());
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void authEndedSuccessfully(String userID)
     {
         tVMsg.setText("User created successfully\nUid: " + userID);
 
         Intent intent = new Intent(this, InfoIOActivity.class);
         intent.putExtra("userID", userID);
         startActivity(intent);
+    }
+
+    private void authFailed(Exception exp)
+    {
+        if (exp instanceof FirebaseAuthInvalidUserException){
+            tVMsg.setText("Invalid email address.");
+        } else if (exp instanceof FirebaseAuthWeakPasswordException) {
+            tVMsg.setText("Password too weak.");
+        } else if (exp instanceof FirebaseAuthUserCollisionException) {
+            tVMsg.setText("User already exists.");
+        } else if (exp instanceof FirebaseAuthInvalidCredentialsException) {
+            tVMsg.setText("General authentication failure.");
+        } else if (exp instanceof FirebaseNetworkException) {
+            tVMsg.setText("Network error. Please check your connection and try again.");
+        } else {
+            tVMsg.setText("An error occurred. Please try again later.");
+        }
     }
 }
