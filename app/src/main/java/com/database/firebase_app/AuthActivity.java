@@ -149,7 +149,7 @@ public class AuthActivity extends AppCompatActivity
         tVMsg.setText("User created successfully\nUid: " + userID);
 
         Intent intent = new Intent(this, InfoIOActivity.class);
-        intent.putExtra("userID", userID);
+        //intent.putExtra("userID", userID);
         startActivity(intent);
     }
 

@@ -1,7 +1,9 @@
 package com.database.firebase_app;
 
+import static com.database.firebase_app.FBRef.refAuth;
 import static com.database.firebase_app.FBRef.refUsers;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Adapter;
@@ -43,8 +45,9 @@ public class InfoIOActivity extends AppCompatActivity
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_info_ioactivity);
 
-        String userID = this.getIntent().getStringExtra("userID");
-        refCurrUserBooks = refUsers.child(userID).child("Books");
+        /*String userID = this.getIntent().getStringExtra("userID");
+        refCurrUserBooks = refUsers.child(userID).child("Books");*/
+        refCurrUserBooks = refUsers.child(refAuth.getUid()).child("Books");
 
         init();
         updateBooksListView();
@@ -121,5 +124,11 @@ public class InfoIOActivity extends AppCompatActivity
             refCurrUserBooks.removeEventListener(booksListener);
         }
         super.onPause();
+    }
+
+    public void sortAndFilterActivity(View view)
+    {
+        Intent intent = new Intent(this, SortAndFilterActivity.class);
+        startActivity(intent);
     }
 }

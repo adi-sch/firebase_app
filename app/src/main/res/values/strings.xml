@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">firebase - app</string>
+    
+    <string-array name="sortKeys">
+        <item>bookID</item>
+        <item>title</item>
+        <item>author</item>
+        <item>rating</item>
+        <item>haveRead</item>
+    </string-array>
 </resources>
